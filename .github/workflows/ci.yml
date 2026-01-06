@@ -1,0 +1,50 @@
+name: CI - Argendev
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
+
+      # ---------- FRONTEND ----------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias frontend
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint frontend
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Test frontend
+        working-directory: frontend
+        run: npm test -- --watch=false
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      # ---------- BACKEND ----------
+      - name: Instalar dependencias backend
+        working-directory: backend
+        run: npm ci
+
+      - name: Lint backend
+        working-directory: backend
+        run: npm run lint
+
+      - name: Test backend
+        working-directory: backend
+        run: npm test
